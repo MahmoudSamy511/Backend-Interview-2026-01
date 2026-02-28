@@ -28,6 +28,21 @@ Missing or wrong credentials → `401 Unauthorized`.
 
 ---
 
+## Rate Limiting
+
+Only the `POST /upload` endpoint is rate limited.
+
+| Setting      | Value               |
+| ------------ | ------------------- |
+| Window       | 1 minute            |
+| Max requests | 15 per window       |
+| Scope        | `POST /upload` only |
+
+Exceeding the limit returns `429 Too Many Requests`.
+`GET /records` and `DELETE /records` are **not** rate limited.
+
+---
+
 ## API Reference
 
 ### `POST /upload`
@@ -48,11 +63,13 @@ Upload a CSV file to bulk-insert records into the database.
 
 **Error responses**
 
-| Status | Reason                         |
-| ------ | ------------------------------ |
-| `400`  | No file uploaded               |
-| `400`  | File is not a CSV              |
-| `401`  | Missing or invalid credentials |
+| Status | Reason                                    |
+| ------ | ----------------------------------------- |
+| `400`  | No file uploaded                          |
+| `400`  | File is not a CSV                         |
+| `400`  | File exceeds 100 MB size limit            |
+| `401`  | Missing or invalid credentials            |
+| `429`  | Rate limit exceeded (max 15 req / minute) |
 
 **Example**
 
